@@ -21,21 +21,29 @@ class PelangganController extends Controller
     public function index()
     {
         $route = $this->routeName;
-        return view($this->viewName.'.index',compact('route'));
+        $title = $this->title;
+        return view($this->viewName.'.index',compact('route','title'));
     }
 
     public function data(Request $request){
-        $datas = Pelanggan::find($request->id);
-
-        if(!isset($request->edit)){
+        if(isset($request->id) || $request->id != ''){
+            $datas = Pelanggan::find($request->id);
+        }else if(isset($request->no) || $request->no != ''){
+            $datas = Pelanggan::where('id_pelanggan',$request->no)->first();
+        }else {
+            $datas = Pelanggan::find($request->id);
+        }
+        
+        $datas2 = Tagihan::find($request->edit);
+        if(!isset($request->edit) || $request->edit == ''){
             $tagihans = Tagihan::where('pelanggan_id', $datas->id)->orderBy('created_at','desc');
-        }else if(isset($request->edit)){
-            $tagihans = Tagihan::where('pelanggan_id', $datas->id)->whereNotIn('id', [$datas->edit])->orderBy('created_at','desc');
+        }else if(isset($request->edit) || ($request->edit != '')){
+            $tagihans = Tagihan::where('pelanggan_id', $datas->id)->whereNotIn('id', [$request->edit])->where('created_at','<',$datas2->created_at)->orderBy('created_at','desc');
         }else{
             $tagihans = Tagihan::where('pelanggan_id', $datas->id)->orderBy('created_at','desc');
         }
         
-
+        
         $jumlah_tagihan = $tagihans->count();
 
         // dd($jumlah_tagihan);
@@ -48,6 +56,7 @@ class PelangganController extends Controller
 
 
         $data = [
+            'id_pelanggan' => $datas->id_pelanggan,
             'name' => $datas->name,
             'no_telepon' => $datas->no_telepon,
             'alamat' => $datas->alamat,
@@ -59,7 +68,7 @@ class PelangganController extends Controller
 
     public function datatable()
     {
-        $datas = Pelanggan::select('id_pelanggan','name','no_telepon','created_at','pelanggans.id');
+        $datas = Pelanggan::select('id_pelanggan','name','no_telepon','created_at','pelanggans.id','nik');
 
         $datatables = DataTables::of($datas)
             ->addIndexColumn()
@@ -68,7 +77,7 @@ class PelangganController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $route = 'pelanggan';
-                return view('layouts.includes.table-action',compact('data','route'));
+                return view('layouts.includes.table-action-pelanggan',compact('data','route'));
             });
 
         return $datatables->make(true);
@@ -82,8 +91,9 @@ class PelangganController extends Controller
     public function create()
     {
         $route = $this->routeName;
+        $title = $this->title;
         
-        return view($this->viewName.'.create',compact('route'));
+        return view($this->viewName.'.create',compact('route','title'));
     }
 
     /**
@@ -98,6 +108,10 @@ class PelangganController extends Controller
             'name' => 'required|string|max:100',
             'no_telepon'=>'string|required|max:100',
             'alamat'=>'string|required|max:255',
+            'no_telepon'=>'string|required|max:100',
+            'nik'=>'max:20'
+        ],[
+            'nik.max' => 'NIK tidak boleh lebih dari 20 angka'
         ]);
 
         try{
@@ -109,6 +123,7 @@ class PelangganController extends Controller
                 'name' => $request->name,
                 'no_telepon'=>$request->no_telepon,
                 'alamat'=>$request->alamat,
+                'nik'=>$request->nik,
             ]);
     
             return redirect(route($this->routeName.'.index'))->with(['success'=>'Berhasil Menambah Data Pelanggan : '.$query->name]);
@@ -137,8 +152,9 @@ class PelangganController extends Controller
     public function edit($id)
     {
         $datas = Pelanggan::findOrFail($id);
+        $title = $this->title;
         $route = $this->routeName;
-        return view($this->viewName.'.edit', compact('datas','route','id'));
+        return view($this->viewName.'.edit', compact('datas','route','id','title'));
     }
 
     /**
@@ -162,6 +178,7 @@ class PelangganController extends Controller
                 'name' => $request->name,
                 'no_telepon'=>$request->no_telepon,
                 'alamat'=>$request->alamat,
+                'nik'=>$request->nik,
             ]);
     
             return redirect(route($this->routeName.'.index'))->with(['success'=>'Berhasil Mengubah Data Pelanggan : '.$query->name]);
@@ -186,5 +203,39 @@ class PelangganController extends Controller
         }catch (\Exception $e){
             return redirect()->back()->with(['error'=>'Gagal Menghapus Data Pelanggan : '.$e->getMessage()])->withErrors($request->all());
         }
+    }
+
+    public function history_tagihan($id)
+    {
+        $datas = Pelanggan::findOrFail($id);
+        $route = $this->routeName;
+        return view($this->viewName.'.history_tagihan', compact('datas','route','id'));
+    }
+
+    public function datatable_history_tagihan(Request $request)
+    {
+        $datas = Tagihan::join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path')->where('pelanggans.id', $request->id);
+
+        $datatables = DataTables::of($datas)
+            ->addIndexColumn()
+            ->editColumn('jumlah_pembayaran',function($data){
+                $jumlah = $data->jumlah_pembayaran;
+                return "Rp. ".number_format($jumlah);
+            })
+            ->editColumn('tanggal',function($data){
+                return $data->tanggal->format('F');
+            })
+            ->addColumn('tahun', function ($data) {
+                return $data->tanggal->format('Y');
+            })
+            ->addColumn('status', function ($data){
+                return $data->status;
+            })
+            ->addColumn('show_image', function ($data){
+                $url = $data->file_path.''.$data->file_name;
+                return view('layouts.includes.image_button',compact('data','url'));
+            });
+
+        return $datatables->make(true);
     }
 }

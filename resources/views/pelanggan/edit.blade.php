@@ -62,6 +62,13 @@
                     </div>
 
                     <div class="mb-3 row">
+                        <label for="nik" class="col-md-2 col-form-label">NIK</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" name="nik" id="nik" value="{{ $datas->nik }}">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
                         <label for="example-tel-input" class="col-md-2 col-form-label">Alamat</label>
                         <div class="col-md-10">
                             <textarea class="form-control" name="alamat" >{{ $datas->alamat }}</textarea>

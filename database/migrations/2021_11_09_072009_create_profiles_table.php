@@ -15,6 +15,9 @@ class CreateProfilesTable extends Migration
     {
         Schema::create('profiles', function (Blueprint $table) {
             $table->id();
+            $table->integer('harga_per_kubik');
+            $table->integer('harga_pemasangan');
+            $table->integer('harga_pemasangan_dp');
             $table->timestamps();
         });
     }

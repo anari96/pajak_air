@@ -35,7 +35,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1">Data Pelanggan</p>
-                            <h5 class="mb-3">2.2k</h5>
+                            <h5 class="mb-3">{{ $pelanggan }}</h5>
                         </div>
                     </div>
                 </div>
@@ -58,7 +58,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1">Jumlah Tagihan</p>
-                            <h5 class="mb-3">50</h5>
+                            <h5 class="mb-3">{{ $tagihan }}</h5>
                         </div>
                     </div>
                 </div>
@@ -81,7 +81,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1">Jumlah Bayar</p>
-                            <h5 class="mb-3">24.03 %</h5>
+                            <h5 class="mb-3">{{ $pembayaran }}</h5>
                         </div>
                     </div>                                        
                 </div>
@@ -104,7 +104,7 @@
                         </div>
                         <div class="flex-grow-1 overflow-hidden">
                             <p class="mb-1">Jumlah Bayar Telat</p>
-                            <h5 class="mb-3">435</h5>
+                            <h5 class="mb-3">{{ $pembayaran_telat }}</h5>
                         </div>
                     </div>
                 </div>

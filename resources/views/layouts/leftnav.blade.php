@@ -19,14 +19,15 @@
             <!-- Left Menu Start -->
             <ul class="metismenu list-unstyled" id="side-menu">
                 <li class="menu-title">Menu</li>
-
+                
+                
                 <li>
-                    <a href="index.html" class="waves-effect">
+                    <a href="/" class="waves-effect">
                         <i class="mdi mdi-home"></i>
                         <span>Home</span>
                     </a>
                 </li>
-
+                @if (Auth::user()->role->nama_role != 'Kasir')
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="mdi mdi-book-open"></i>
@@ -37,6 +38,10 @@
                         <li><a href="{{ route('pelanggan.index') }}">Pelanggan</a></li>
                     </ul>
                 </li>
+
+                @endif
+                @if (Auth::user()->role->nama_role != 'Kasir')
+                <li class="menu-title">Tagihan Meter</li>
                 <li>
                     <a href="{{ route('tagihan.index') }}" class=" waves-effect">
                         <i class="mdi mdi-clipboard-text"></i>
@@ -45,30 +50,65 @@
                 </li>
 
                 <li>
-                    <a href="calendar.html" class=" waves-effect">
+                    <a href="{{ route('pembayaran.index') }}" class=" waves-effect">
                         <i class="mdi mdi-clipboard-check"></i>
                         <span>Pembayaran</span>
                     </a>
                 </li>
 
+                <li>
+                    <a href="{{ route('pembayaran_telat.index') }}" class=" waves-effect">
+                        <i class="mdi mdi-clipboard-check"></i>
+                        <span>Pembayaran Telat</span>
+                    </a>
+                </li>
+
+                <li class="menu-title">Pemasangan Baru</li>
+                <li>
+                    <a href="{{ route('tagihan_pemasangan.index') }}" class=" waves-effect">
+                        <i class="mdi mdi-clipboard-text"></i>
+                        <span>Tagihan Pemasangan</span>
+                    </a>
+                </li>
                 
+                <li>
+                    <a href="{{ route('pembayaran_pemasangan.index') }}" class=" waves-effect">
+                        <i class="mdi mdi-clipboard-check"></i>
+                        <span>Pembayaran Pemasangan</span>
+                    </a>
+                </li>                    
+                @endif
+            
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="mdi mdi-book-open"></i>
+                        <span>Cek Tagihan</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('cek_tagihan.tagihan') }}">Tagihan Meter</a></li>
+                        <li><a href="{{ route('cek_tagihan.tagihan_pemasangan') }}">Tagihan Pemasangan</a></li>
+                    </ul>
+                </li>
+                @if (Auth::user()->role->nama_role != 'Kasir')
                 <li>
                     <a href="javascript: void(0);" class="has-arrow waves-effect">
                         <i class="mdi mdi-archive"></i>
                         <span>Pesan Whatsapp</span>
                     </a>
                     <ul class="sub-menu" aria-expanded="false">
-                        <li><a href="email-inbox.html">Template Pesan</a></li>
-                        <li><a href="email-read.html">History Pesan</a></li>
+                        <li><a href="{{ route('template_pesan.index') }}">Template Pesan</a></li>
+                        <li><a href="{{ route('history_pesan.index') }}">History Pesan</a></li>
                     </ul>
                 </li>
+                @endif
 
-                <li>
+
+                {{-- <li>
                     <a href="calendar.html" class=" waves-effect">
                         <i class="mdi mdi-chart-box"></i>
                         <span>Laporan</span>
                     </a>
-                </li>
+                </li> --}}
 
                 {{-- <li class="menu-title">Layouts</li>
 

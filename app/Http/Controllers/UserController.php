@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\User;
+use App\Models\Role;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\Rules;
@@ -11,8 +12,10 @@ use Yajra\DataTables\Facades\DataTables;
 
 class UserController extends Controller
 {
+    
     protected $routeName = 'user';
     protected $viewName = 'user';
+    protected $title = 'Pengguna';
     /**
      * Display a listing of the resource.
      *
@@ -48,8 +51,10 @@ class UserController extends Controller
      */
     public function create()
     {
+        $roles = Role::all();
+        $title = $this->title;
         $route = $this->routeName;
-        return view($this->viewName.'.create',compact('route'));
+        return view($this->viewName.'.create',compact('route','title','roles'));
     }
 
     /**
@@ -65,6 +70,7 @@ class UserController extends Controller
             'email' => 'required|string|email|max:100|unique:users',
             'password' => ['required', 'confirmed', Rules\Password::defaults()],
             'no_telepon'=>'string|required|max:100',
+            'role_id'=>'string|required|max:100',
         ]);
 
         try{
@@ -72,7 +78,8 @@ class UserController extends Controller
                 'name' => $request->name,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                'no_telepon'=>'string|required|max:225'
+                'no_telepon'=>$request->no_telepon,
+                'role_id'=>$request->role_id
             ]);
     
             return redirect(route($this->routeName.'.index'))->with(['success'=>'Berhasil Menambah Data User : '.$query->name]);
@@ -101,9 +108,11 @@ class UserController extends Controller
      */
     public function edit($id)
     {
+        $title = $this->title;
         $datas = User::findOrFail($id);
+        $roles = Role::all();
         $route = $this->routeName;
-        return view($this->viewName.'.edit', compact('datas','route','id'));
+        return view($this->viewName.'.edit', compact('datas','route','id','roles','title'));
     }
 
     /**
@@ -119,7 +128,8 @@ class UserController extends Controller
             'name' => 'required|string|max:100',
             'email' => 'required|string|email|max:100',
             // 'password' => ['confirmed', Rules\Password::defaults()],
-            // 'no_telepon'=>'string|required|max:100',
+            'no_telepon'=>'string|max:100',
+            'role_id'=>'string|required|max:100',
         ]);
         try{
             $datas = User::findOrFail($id);
@@ -127,14 +137,16 @@ class UserController extends Controller
                 $datas->update([
                     'name'=> $request->name,
                     'email'=> $request->email,
-                    'no_telepon'=> $request->no_telepon
+                    'no_telepon'=> $request->no_telepon,
+                    'role_id'=>$request->role_id
                 ]);
             }else if($request->password){
                 $datas->update([
                     'name'=> $request->name,
                     'email'=> $request->email,
                     'no_telepon'=> $request->no_telepon,
-                    'password'=> $request->password
+                    'password'=> Hash::make($request->password),
+                    'role_id'=>$request->role_id
                 ]);
             }
             return redirect(route($this->routeName.'.index'))->with(['success'=>'Berhasil Mengubah Data User : '.$datas->name]);

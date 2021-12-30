@@ -7,12 +7,12 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Form Elements</h4>
+                <h4 class="mb-sm-0">{{$title}}</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
-                        <li class="breadcrumb-item active">Form Elements</li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">{{$title}}</a></li>
+                        <li class="breadcrumb-item active">{{$title}}</li>
                     </ol>
                 </div>
 
@@ -39,11 +39,11 @@
                                 </ul>
                             </div>
                         @endif --}}
-                    <form action="{{ route($route.'.store') }}" method='POST' id="myForm">
+                    <form action="{{ route($route.'.store') }}" method='POST' id="myForm" enctype="multipart/form-data">
                         @csrf
                     <div class="row">
                         <div class="col-6">
-                            <div class="row">
+                            {{-- <div class="row">
                                     <label for="example-text-input" class="col-md-4 col-form-label">No Tagihan</label>
                             </div>
                             <div class="mb-3 row">
@@ -51,7 +51,7 @@
                                 <div class="col-md-10">
                                     <input class="form-control" type="text" name="no_tagihan" id="example-text-input">
                                 </div>
-                            </div>
+                            </div> --}}
                             <div class="row">
                                 <label for="example-text-input" class="col-md-4 col-form-label">ID Pelanggan</label>
                             </div>
@@ -96,6 +96,10 @@
                                 </div>
                             </div>
 
+                            <div class="mb-3">
+                                <label class="form-label">Foto Meter</label>
+                                <input type="file" name="file" class="filestyle">
+                            </div>
                         </div>
 
                         <div class="col-6">
@@ -198,6 +202,7 @@
 </div>
 
 @push('scripts')
+<script src="{{asset('assets/libs/admin-resources/bootstrap-filestyle/bootstrap-filestyle.min.js')}}"></script>
     <script>
         let p;
         let pt;
@@ -211,7 +216,7 @@
 
             document.querySelector('#pemakaian').value = p;
 
-            pt = p * 11000;
+            pt = p * 11500;
 
             getTagihan(pt);
         }
@@ -222,7 +227,10 @@
         }
 
         $('#id_pelanggan').on('select2:close', function (e){
-            postData('{{ route("pelanggan.data") }}','POST', { _token: csrfToken ,id: $('#id_pelanggan').val() })
+            postData('{{ route("pelanggan.data") }}','POST', {
+                _token: csrfToken ,
+                id: $('#id_pelanggan').val() 
+            })
             .then(data => {
                 console.log(data); // JSON data parsed by `data.json()` call
                 document.querySelector('#nama').value= data.name;
@@ -248,9 +256,14 @@
 
         form.addEventListener('submit', (event) => {
             event.preventDefault();
-            if(document.querySelector('#meter_sekarang').value <= document.querySelector('#meter_sebelumnya').value){
+            let meter_sebelumnya = parseInt(document.querySelector('#meter_sebelumnya').value);
+            let meter_sekarang = parseInt(document.querySelector('#meter_sekarang').value);
+            if(meter_sekarang < meter_sebelumnya){
+                console.log(document.querySelector('#meter_sebelumnya').value);
+                console.log(document.querySelector('#meter_sekarang').value);
+                console.log(pt);
                 alert('error');
-            }else{
+            }else if(meter_sekarang > meter_sebelumnya){
                 form.submit();
             }
         });

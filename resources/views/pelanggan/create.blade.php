@@ -7,12 +7,12 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Form Elements</h4>
+                <h4 class="mb-sm-0">{{$title}}</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Forms</a></li>
-                        <li class="breadcrumb-item active">Form Elements</li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">{{$title}}</a></li>
+                        <li class="breadcrumb-item active">{{$title}}</li>
                     </ol>
                 </div>
 
@@ -41,27 +41,34 @@
                         @endif --}}
                     <form action="{{ route($route.'.store') }}" method='POST'>
                         @csrf
-                    <div class="mb-3 row">
+                    {{-- <div class="mb-3 row">
                         <label for="example-text-input" class="col-md-2 col-form-label">ID Pelanggan</label>
                         <div class="col-md-10">
                             <input class="form-control" type="text" name="id_pelanggan" id="example-text-input">
                         </div>
-                    </div>
+                    </div> --}}
                     <div class="mb-3 row">
-                        <label for="example-text-input" class="col-md-2 col-form-label">Nama</label>
+                        <label for="name" class="col-md-2 col-form-label">Nama</label>
                         <div class="col-md-10">
-                            <input class="form-control" type="text" name="name" id="example-text-input">
+                            <input class="form-control" type="text" name="name" id="name">
                         </div>
                     </div>
                     <div class="mb-3 row">
-                        <label for="example-tel-input" class="col-md-2 col-form-label">No. Telepon</label>
+                        <label for="no_telepon" class="col-md-2 col-form-label">No. Telepon</label>
                         <div class="col-md-10">
-                            <input class="form-control" type="tel" name="no_telepon" id="example-tel-input">
+                            <input class="form-control" type="tel" name="no_telepon" id="no_telepon">
                         </div>
                     </div>
 
                     <div class="mb-3 row">
-                        <label for="example-tel-input" class="col-md-2 col-form-label">Alamat</label>
+                        <label for="nik" class="col-md-2 col-form-label">NIK</label>
+                        <div class="col-md-10">
+                            <input class="form-control" type="text" name="nik" id="nik">
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                        <label for="alamat" class="col-md-2 col-form-label">Alamat</label>
                         <div class="col-md-10">
                             <textarea class="form-control" name="alamat" ></textarea>
                         </div>
@@ -84,6 +91,15 @@
         </div> <!-- end col -->
     </div>
     <!-- end row -->
+
+    @push('scripts')
+        <script>
+            setInputFilter(document.getElementById("nik"), function(value) {
+                return /^-?\d*$/.test(value) && (value === "" || value.length <= 16); 
+            });
+        </script>
+    @endpush
+
 
 </div>
 @endsection

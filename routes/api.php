@@ -2,6 +2,10 @@
 
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\PasswordController;
+use App\Http\Controllers\Api\PelangganController;
+use App\Http\Controllers\Api\TagihanController;
 
 /*
 |--------------------------------------------------------------------------
@@ -14,6 +18,23 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
+// Route::middleware('auth:api')->get('/user', function (Request $request) {
+//     return $request->user();
+// });
+
+Route::post('login', [UserController::class, 'login']);
+
+Route::post('send_password_email',[PasswordController::class, 'send_password_email']);
+
+Route::group(['middleware' => 'auth:sanctum'], function(){
+    Route::post('logout', [UserController::class, 'logout']);
+    Route::get('pelanggan_list',[PelangganController::class, 'data_pelanggan']);
+    Route::get('pelanggan_detail',[PelangganController::class, 'detail_pelanggan']);
+    Route::post('tambah_penggunaan',[PelangganController::class, 'store']);
+    Route::get('tagihan_list',[TagihanController::class,'tagihan']);
+    Route::get('tagihan_detail',[TagihanController::class,'tagihan_detail']);
+    Route::get('tagihan_terlambat',[TagihanController::class,'tagihan_terlambat']);
+    Route::get('tagihan_terlambat_detail',[TagihanController::class,'tagihan_terlambat_detail']);
+
 });
+

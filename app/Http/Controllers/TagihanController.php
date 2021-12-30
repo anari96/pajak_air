@@ -8,6 +8,7 @@ use App\Models\Pelanggan;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 
 class TagihanController extends Controller
 {
@@ -24,27 +25,68 @@ class TagihanController extends Controller
     public function index()
     {
         $route = $this->routeName;
-        return view($this->viewName.'.index',compact('route'));
+        $title = $this->title;
+        return view($this->viewName.'.index',compact('route','title'));
     }
 
     public function datatable()
     {
-        $datas = Tagihan::join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name');
+        $datas = Tagihan::join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path');
 
         $datatables = DataTables::of($datas)
             ->addIndexColumn()
+            ->editColumn('jumlah_pembayaran',function($data){
+                $jumlah = $data->jumlah_pembayaran;
+                return "Rp. ".number_format($jumlah);
+            })
             ->editColumn('tanggal',function($data){
                 return $data->tanggal->format('F');
             })
             ->addColumn('tahun', function ($data) {
                 return $data->tanggal->format('Y');
             })
+            ->addColumn('status', function ($data){
+                return $data->status;
+            })
+            ->addColumn('show_image', function ($data){
+                $url = $data->file_path.''.$data->file_name;
+                return view('layouts.includes.image_button',compact('data','url'));
+            })
             ->addColumn('action', function ($data) {
                 $route = 'tagihan';
-                return view('layouts.includes.table-action',compact('data','route'));
+                return view('layouts.includes.table-action-alt',compact('data','route'));
             });
 
         return $datatables->make(true);
+    }
+
+    public function data(Request $request){
+        $datas = Tagihan::find($request->id);
+
+        $tagihans_sebelumnya = Tagihan::where('pelanggan_id', $datas->pelanggan_id)->whereNotIn('id', [$datas->id])->where('created_at','<',$datas->created_at)->orderBy('created_at','desc');
+
+        $jumlah_tagihan = $tagihans_sebelumnya->count();
+
+        if($jumlah_tagihan > 0){
+            $meter_sebelumnya = $tagihans_sebelumnya->first()->meter_penggunaan;
+        }else if($jumlah_tagihan <= 0){
+            $meter_sebelumnya = 0;
+        }
+
+        
+
+        $total_pemakaian = $datas->meter_penggunaan - $meter_sebelumnya;
+
+        $data = [
+            'name' => $datas->pelanggan->name,
+            'no_telepon' => $datas->pelanggan->no_telepon,
+            'alamat' => $datas->pelanggan->alamat,
+            'total_pemakaian' => $total_pemakaian,
+            'bulan' => $datas->tanggal->format('n'),
+            'tahun' => $datas->tanggal->format('Y'),
+        ];
+
+        return response()->json($data);
     }
 
     /**
@@ -55,7 +97,8 @@ class TagihanController extends Controller
     public function create()
     {
         $route = $this->routeName;
-        
+        $title = $this->title;
+
         $start = \Carbon\Carbon::now()->subYear()->startOfYear();
         $end = \Carbon\Carbon::now()->subYear()->endOfYear();
         $months_to_render = $start->diffInMonths($end);
@@ -76,7 +119,7 @@ class TagihanController extends Controller
         // dd($dates);
         // dd(Carbon::now()->format('D MMMM Y, H:i:s'));
 
-        return view($this->viewName.'.create',compact('route','dates','years','pelanggans'));
+        return view($this->viewName.'.create',compact('route','title','dates','years','pelanggans'));
     }
 
     /**
@@ -94,6 +137,21 @@ class TagihanController extends Controller
             'tahun' => 'numeric|required|digits_between:4,4',
         ]);
 
+        if($request->has('file')){
+            $validator = $request->validate([
+                'file' => 'max:5000',
+            ]);   
+        }
+
+        if ($request->has('file')) {
+            // dd($request->file('file'));
+            $file=$request->file('file');
+            $direktori=public_path().'/storage/image/';          
+            $nama_file=str_replace(' ','-',$request->file->getClientOriginalName());
+            $file_format= $request->file->getClientOriginalExtension();
+            $uploadSuccess = $request->file->move($direktori,$nama_file);
+        }
+
         $datas = Pelanggan::find($request->id_pelanggan);
         $tagihans = Tagihan::where('pelanggan_id', $datas->id)->orderBy('created_at','desc');
 
@@ -109,31 +167,47 @@ class TagihanController extends Controller
 
         $pemakaian = $request->meter_sekarang - $meter_sebelumnya;
 
-        $jumlah_pembayaran = $pemakaian * 11000;
+        $jumlah_pembayaran = $pemakaian * 11500;
 
         // dd($jumlah_pembayaran);
 
-        $date = $request->tahun.'-'.$request->bulan.'-01';
+        $date = $request->tahun.'-'.$request->bulan.'-20';
 
         $date_formated = Carbon::createFromFormat('Y-m-d',$date);
 
         
         // dd($date_formated->format('Y-m-d'));
         try{
+            DB::beginTransaction();
             $number = rand(0,1000);
             $txt = date("Ymdhis").''.$number;
             
             $id = $txt.$number;
-            $query = Tagihan::create([
-                'id_tagihan' => $txt,
-                'pelanggan_id' => $datas->id,
-                'tanggal'=>$date_formated,
-                'meter_penggunaan'=>$request->meter_sekarang,
-                'jumlah_pembayaran'=> $jumlah_pembayaran
-            ]);
 
+            if (isset($uploadSuccess)) {
+                $query = Tagihan::create([
+                    'id_tagihan' => $txt,
+                    'pelanggan_id' => $datas->id,
+                    'tanggal'=>$date_formated,
+                    'meter_penggunaan'=>$request->meter_sekarang,
+                    'jumlah_pembayaran'=> $jumlah_pembayaran,
+                    'file_name' => $nama_file,
+                    'file_path' => '/storage/image/',
+                ]);
+            }else{
+                $query = Tagihan::create([
+                    'id_tagihan' => $txt,
+                    'pelanggan_id' => $datas->id,
+                    'tanggal'=>$date_formated,
+                    'meter_penggunaan'=>$request->meter_sekarang,
+                    'jumlah_pembayaran'=> $jumlah_pembayaran
+                ]);
+            }
+            
+            DB::commit();
             return redirect(route($this->routeName.'.index'))->with(['success'=>'Berhasil Menambah Data Tagihan : '.$query->id_tagihan]);
         } catch (\Exception $e){
+            DB::rollback();
             return redirect()->back()->with(['error'=>'Gagal Menambah Data Tagihan : '.$e->getMessage()])->withErrors($request->all());
         }
     }
@@ -159,6 +233,7 @@ class TagihanController extends Controller
     {
         $datas = Tagihan::findOrFail($id);
         $route = $this->routeName;
+        $title = $this->title;
 
         $pelanggans = Pelanggan::all();
 
@@ -178,7 +253,7 @@ class TagihanController extends Controller
 
         //dd($datas->tanggal->format("n"));
 
-        return view($this->viewName.'.edit', compact('datas','route','id','dates','years','pelanggans'));
+        return view($this->viewName.'.edit', compact('datas','route','title','id','dates','years','pelanggans'));
     }
 
     /**
@@ -198,7 +273,8 @@ class TagihanController extends Controller
         ]);
         
         $datas = Pelanggan::find($request->id_pelanggan);
-        $tagihans = Tagihan::where('pelanggan_id', $datas->id)->whereNotIn('id', [$id])->orderBy('created_at','desc');
+        $datas2 = Tagihan::find($id);
+        $tagihans = Tagihan::where('pelanggan_id', $datas->id)->whereNotIn('id', [$datas->id])->where('created_at','<',$datas2->created_at)->orderBy('created_at','desc');
 
         $jumlah_tagihan = $tagihans->count();
 
@@ -212,11 +288,11 @@ class TagihanController extends Controller
 
         $pemakaian = $request->meter_sekarang - $meter_sebelumnya;
 
-        $jumlah_pembayaran = $pemakaian * 11000;
+        $jumlah_pembayaran = $pemakaian * 11500;
 
         // dd($jumlah_pembayaran);
 
-        $date = $request->tahun.'-'.$request->bulan.'-01';
+        $date = $request->tahun.'-'.$request->bulan.'-20';
 
         $date_formated = Carbon::createFromFormat('Y-m-d',$date);
 
@@ -252,5 +328,56 @@ class TagihanController extends Controller
         }catch (\Exception $e){
             return redirect()->back()->with(['error'=>'Gagal Menghapus Data Tagihan : '.$e->getMessage()])->withErrors($request->all());
         }
+    }
+
+    public function show_file($id)
+    {
+        $datas = Tagihan::find($id);
+
+        $url = $datas->file_path.''.$datas->file_name;
+
+        // dd($url);
+        return response()->download(asset($url));
+    }
+
+    public function nota($id)
+    {
+        $datas = Tagihan::find($id);
+        return view('tagihan.nota' , compact('datas'));
+    }
+
+    public function tagihan_telat()
+    {
+        try {
+            $datas = Tagihan::doesntHave('pembayaran')->orderBy('created_at', 'DESC')->get();
+
+            $tagihan = [];
+
+            foreach($datas as $d){
+                if($d->tanggal->format('Y-m-d') < date('Y-m-d')){
+                    $diff = $d->tanggal->diffInDays(Carbon::now()->format('Y-m-d'));
+                    $tagihan[] = [
+                        'id' => $d->id,
+                        'no_tagihan' => $d->id_tagihan,
+                        'no_pelanggan' => $d->pelanggan->id_pelanggan,
+                        'nama' => $d->pelanggan->name,
+                        'jumlah_pembayaran' => $d->jumlah_pembayaran,
+                        'hari' => $diff.' Hari'
+                    ];
+                }
+            }
+
+            $data = [
+                'status' => 200,
+                'data' => $tagihan,
+            ];
+        } catch (\Throwable $th) {
+            $data = [
+                'status' => 500,
+                'message' => 'Tagihan Tidak Ditemukan',
+                'data' => null,
+            ];
+        }
+        return response()->json($data,$data['status']);
     }
 }

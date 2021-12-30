@@ -15,9 +15,11 @@ class CreateTagihanPemasangansTable extends Migration
     {
         Schema::create('tagihan_pemasangans', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('pelanggan_Id');
+            $table->string('id_tagihan_pemasangan');
+            $table->unsignedBigInteger('pelanggan_id');
             $table->integer('tipe_pembayaran');
             $table->integer('jumlah_pembayaran');
+            $table->date('tanggal');
             $table->timestamps();
         });
     }

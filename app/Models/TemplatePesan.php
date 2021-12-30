@@ -8,4 +8,6 @@ use Illuminate\Database\Eloquent\Model;
 class TemplatePesan extends Model
 {
     use HasFactory;
+
+    protected $fillable = ['nama_pesan','isi_pesan'];
 }
