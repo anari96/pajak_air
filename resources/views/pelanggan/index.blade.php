@@ -42,7 +42,6 @@
                             <th>Nama Pelanggan</th>
                             <th>No. Telepon</th>
                             <th>NIK</th>
-                            <th>Email</th>
                             <th>Created At</th>
                             <th>Aksi</th>
                         </tr>

@@ -6,6 +6,8 @@ use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\PasswordController;
 use App\Http\Controllers\Api\PelangganController;
 use App\Http\Controllers\Api\TagihanController;
+// use App\Http\Controllers\Api\TagihanPemasanganController;
+use App\Http\Controllers\Api\HomeController;
 
 /*
 |--------------------------------------------------------------------------
@@ -35,6 +37,6 @@ Route::group(['middleware' => 'auth:sanctum'], function(){
     Route::get('tagihan_detail',[TagihanController::class,'tagihan_detail']);
     Route::get('tagihan_terlambat',[TagihanController::class,'tagihan_terlambat']);
     Route::get('tagihan_terlambat_detail',[TagihanController::class,'tagihan_terlambat_detail']);
-
+    Route::get('home', [HomeController::class,'index']);
 });
 

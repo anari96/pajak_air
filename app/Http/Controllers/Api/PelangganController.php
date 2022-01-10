@@ -126,10 +126,9 @@ class PelangganController extends Controller
             
             $id = $txt.$number;
 
-            if(isset($tagihans))
-            {
+            if($jumlah_tagihan > 0){
                 $tanggal = $tagihans->first()->tanggal->addMonth(1);
-            }else{
+            }else if($jumlah_tagihan <= 0){
                 $tanggal = date('Y-m').'-20';
             }
             

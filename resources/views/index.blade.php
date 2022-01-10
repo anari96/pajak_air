@@ -113,10 +113,99 @@
             <!-- end card -->
         </div>
         <!-- end col -->
+
+
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex text-muted">
+                        <div class="flex-shrink-0  me-3 align-self-center">
+                            <div class="avatar-sm">
+                                <div class="avatar-title bg-dark rounded-circle text-primary font-size-20" style="background-color: #5541D7 !important;">
+                                    <i class="mdi mdi-exclamation-thick"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-1">Total Tagihan</p>
+                            <h5 class="mb-3">Rp. {{ number_format($jumlah_pembayaran) }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex text-muted">
+                        <div class="flex-shrink-0  me-3 align-self-center">
+                            <div class="avatar-sm">
+                                <div class="avatar-title bg-dark rounded-circle text-primary font-size-20" style="background-color: #5541D7 !important;">
+                                    <i class="mdi mdi-exclamation-thick"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-1">Total Tagihan Belum Dibayar</p>
+                            <h5 class="mb-3">Rp. {{ number_format($jumlah_hutang) }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex text-muted">
+                        <div class="flex-shrink-0  me-3 align-self-center">
+                            <div class="avatar-sm">
+                                <div class="avatar-title bg-dark rounded-circle text-primary font-size-20" style="background-color: #5541D7 !important;">
+                                    <i class="mdi mdi-exclamation-thick"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-1">Total Tagihan Pemasangan</p>
+                            <h5 class="mb-3">Rp. {{ number_format($jumlah_pembayaran_pemasangan) }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
+
+        <div class="col-xl-3 col-sm-6">
+            <div class="card">
+                <div class="card-body">
+                    <div class="d-flex text-muted">
+                        <div class="flex-shrink-0  me-3 align-self-center">
+                            <div class="avatar-sm">
+                                <div class="avatar-title bg-dark rounded-circle text-primary font-size-20" style="background-color: #5541D7 !important;">
+                                    <i class="mdi mdi-exclamation-thick"></i>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="flex-grow-1 overflow-hidden">
+                            <p class="mb-1">Total Tagihan Pemasangan Belum Lunas</p>
+                            <h5 class="mb-3">Rp. {{ number_format($jumlah_hutang_pemasangan) }}</h5>
+                        </div>
+                    </div>
+                </div>
+                <!-- end card-body -->
+            </div>
+            <!-- end card -->
+        </div>
     </div>
     <!-- end row -->
 
-    <div class="row">
+    {{-- <div class="row">
         <div class="col-xl-8">
             <div class="card">
                 <div class="card-body">
@@ -124,7 +213,7 @@
                         <div class="flex-grow-1">
                             <h5 class="card-title">Overview</h5>
                         </div>
-                        {{-- <div class="flex-shrink-0">
+                        <div class="flex-shrink-0">
                             <div>
                                 <button type="button" class="btn btn-soft-secondary btn-sm">
                                     ALL
@@ -139,22 +228,21 @@
                                     1Y
                                 </button>
                             </div>
-                        </div> --}}
+                        </div>
                     </div>
 
                     <div>
                         <div id="mixed-chart" class="apex-charts" dir="ltr"></div>
                     </div>
                 </div>
-                <!-- end card-body -->
 
                 
             </div>
-            <!-- end card -->
-        </div>
-        <!-- end col -->
 
-    </div>
+        </div>
+
+
+    </div> --}}
     <!-- end row -->
 
 

@@ -100,6 +100,19 @@
                         <li><a href="{{ route('history_pesan.index') }}">History Pesan</a></li>
                     </ul>
                 </li>
+                <li>
+                    <a href="javascript: void(0);" class="has-arrow waves-effect">
+                        <i class="mdi mdi-archive"></i>
+                        <span>Laporan</span>
+                    </a>
+                    <ul class="sub-menu" aria-expanded="false">
+                        <li><a href="{{ route('laporan.pelanggan') }}">Pelanggan</a></li>
+                        <li><a href="{{ route('laporan.tagihan') }}">Tagihan</a></li>
+                        <li><a href="{{ route('laporan.tagihan_pemasangan') }}">Tagihan Pemasangan</a></li>
+                        <li><a href="{{ route('laporan.pembayaran') }}">Pembayaran</a></li>
+                        <li><a href="{{ route('laporan.pembayaran_pemasangan') }}">Pembayaran Pemasangan</a></li>
+                    </ul>
+                </li>
                 @endif
 
 

@@ -7,12 +7,12 @@
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Pengguna</h4>
+                <h4 class="mb-sm-0">{{$title}}</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Master Data</a></li>
-                        <li class="breadcrumb-item active">Pengguna</li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">{{$title}}</a></li>
+                        <li class="breadcrumb-item active">{{$title}}</li>
                     </ol>
                 </div>
 
@@ -26,27 +26,22 @@
             <div class="card">
                 <div class="card-body">
                     <div class="row justify-content-end mb-2">
-                        <div class="col-md-2">
-                            <a href="{{ route($route.'.create') }}" class="btn btn-primary col-md-12"><i class="mdi mdi-plus"></i> Tambah</a>
-                        </div>
                     </div>
                     {{-- <h4 class="card-title">Pengguna</h4> --}}
                     {{-- <p class="card-title-desc">DataTables has most features enabled by
                         default, so all you need to do to use it with your own tables is to call
                         the construction function: <code>$().DataTable();</code>.
                     </p> --}}
-                    <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Jabatan</th>
+                            <th>ID Pelanggan</th>
+                            <th>Nama Pelanggan</th>
+                            <th>No. Telepon</th>
+                            <th>NIK</th>
                             <th>Created At</th>
-                            <th>Aksi</th>
                         </tr>
                         </thead>
-
-
                         <tbody>
                 
                         </tbody>
@@ -87,20 +82,24 @@
             serverSide: true,
             order: [[ 0, "desc" ]],
             ajax: {
-                'url': '{{ route("datatable.user") }}',
+                'url': '{{ route("datatable.pelanggan") }}',
                 'type': 'GET',
                 'beforeSend': function (request) {
                     request.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
                 }
             },
             columns: [
+                {data:'id_pelanggan',name:'id_pelanggan'},
                 {data:'name',name:'name'},
-                {data:'email',name:'email'},
-                {data:'nama_role', name:'nama_role'},
+                {data:'no_telepon',name:'no_telepon'},
+                {data:'nik',name:'nik'},
                 {data:'created_at',name:'created_at'},
-                {data:'action',name:'action' , searchable: false},
 
             ],
+            dom: 'Bfrtip',
+            buttons: [
+                'excel'
+            ]
         });
     </script>
 @endpush

@@ -32,9 +32,14 @@
                                 <input type="text" class="form-control" placeholder="ID Pelanggan" id="id_pelanggan">
                             </div>
                         </div>
-                        <div class="col-md-4">
+                        <div class="col-md-7">
                             <div class="form-group">
                                 <button class="btn btn-primary" id="cari">Cari</button>
+                            </div>
+                        </div>
+                        <div class="col-md-1">
+                            <div class="form-group">
+                                <a href="{{ route('tagihan_pemasangan.create') }}" class="btn btn-primary" id="cari">Tambah</a>
                             </div>
                         </div>
                     </div>

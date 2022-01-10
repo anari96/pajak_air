@@ -2,17 +2,17 @@
 
 @section('content')
 <div class="container-fluid">
-
+    
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
             <div class="page-title-box d-sm-flex align-items-center justify-content-between">
-                <h4 class="mb-sm-0">Pengguna</h4>
+                <h4 class="mb-sm-0">{{$title}}</h4>
 
                 <div class="page-title-right">
                     <ol class="breadcrumb m-0">
-                        <li class="breadcrumb-item"><a href="javascript: void(0);">Master Data</a></li>
-                        <li class="breadcrumb-item active">Pengguna</li>
+                        <li class="breadcrumb-item"><a href="javascript: void(0);">{{$title}}</a></li>
+                        <li class="breadcrumb-item active">{{$title}}</li>
                     </ol>
                 </div>
 
@@ -25,9 +25,13 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row justify-content-end mb-2">
+                    <div class="row mb-2">
                         <div class="col-md-2">
-                            <a href="{{ route($route.'.create') }}" class="btn btn-primary col-md-12"><i class="mdi mdi-plus"></i> Tambah</a>
+                            <input type="date" name="date1" value='{{ date('Y-m-d') }}' id='date1'>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input type="date" name="date2" value='{{ date('Y-m-d') }}' id='date2'>
                         </div>
                     </div>
                     {{-- <h4 class="card-title">Pengguna</h4> --}}
@@ -35,18 +39,16 @@
                         default, so all you need to do to use it with your own tables is to call
                         the construction function: <code>$().DataTable();</code>.
                     </p> --}}
-                    <table id="datatable" class="table table-bordered dt-responsive nowrap" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
+                    <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                         <tr>
-                            <th>User</th>
-                            <th>Email</th>
-                            <th>Jabatan</th>
-                            <th>Created At</th>
-                            <th>Aksi</th>
+                            <th>No Pembayaran</th>
+                            <th>Tanggal</th>
+                            <th>ID Pelanggan</th>
+                            <th>Nama</th>
+                            <th>Tagihan</th>
                         </tr>
                         </thead>
-
-
                         <tbody>
                 
                         </tbody>
@@ -87,20 +89,35 @@
             serverSide: true,
             order: [[ 0, "desc" ]],
             ajax: {
-                'url': '{{ route("datatable.user") }}',
+                'url': '{{ route("datatable.laporan_pembayaran") }}',
                 'type': 'GET',
                 'beforeSend': function (request) {
                     request.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
-                }
+                },
+                data: function (d) {
+                    d.date1 = $('#date1').val();
+                    d.date2 = $('#date2').val();
+                },
             },
             columns: [
-                {data:'name',name:'name'},
-                {data:'email',name:'email'},
-                {data:'nama_role', name:'nama_role'},
-                {data:'created_at',name:'created_at'},
-                {data:'action',name:'action' , searchable: false},
+                {data:'id_pembayaran',name:'id_pembayaran'},
+                {data:'tanggal',name:'tanggal'},
+                {data:'id_pelanggan',name:'pelanggans.id_pelanggan'},
+                {data:'name',name:'pelanggans.name'},
+                {data:'jumlah_pembayaran', name:'tagihans.jumlah_pembayaran'},
 
             ],
+            dom: 'Bfrtip',
+            buttons: [
+                'excel'
+            ]
+        });
+
+        $('#date1').change(function(){
+        table.draw();
+        });
+        $('#date2').change(function(){
+        table.draw();
         });
     </script>
 @endpush

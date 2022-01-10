@@ -11,6 +11,8 @@ use App\Models\PembayaranPemasangan;
 use Yajra\DataTables\Facades\DataTables;
 use Carbon\Carbon;
 
+use Auth;
+
 class TagihanPemasanganController extends Controller
 {
     protected $routeName = 'tagihan_pemasangan';
@@ -24,6 +26,11 @@ class TagihanPemasanganController extends Controller
      */
     public function index()
     {
+        
+        if (Auth::user()->role->nama_role == 'Kasir') {
+            return redirect(route('cek_tagihan.tagihan_pemasangan'));
+        }
+
         $route = $this->routeName;
         $title = $this->title;
         return view($this->viewName.'.index',compact('route','title'));
@@ -50,7 +57,8 @@ class TagihanPemasanganController extends Controller
             })
             ->addColumn('action', function ($data) {
                 $route = 'tagihan_pemasangan';
-                return view('layouts.includes.table-action-alt-2',compact('data','route'));
+                $status = $data->status;
+                return view('layouts.includes.table-action-alt-2',compact('data','route','status'));
             });
 
         return $datatables->make(true);

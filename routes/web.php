@@ -13,6 +13,7 @@ use App\Http\Controllers\TemplatePesanController;
 use App\Http\Controllers\PembayaranTelatController;
 use App\Http\Controllers\HistoryPesanController;
 use App\Http\Controllers\LaporanController;
+use App\Http\Controllers\ProfileController;
 
 /*
 |--------------------------------------------------------------------------
@@ -51,7 +52,10 @@ Route::middleware(['auth'])->group(function()use($ctrl){
     Route::resource('pembayaran_telat', PembayaranTelatController::class);
     Route::resource('history_pesan', HistoryPesanController::class);
 
-    Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    // Route::get('laporan', [LaporanController::class, 'index'])->name('laporan.index');
+    Route::get('profile', [ProfileController::class,'index'])->name('profile.index');
+    Route::post('profile/update', [ProfileController::class,'update'])->name('profile.update');
+
 
     Route::get('kirim_pesan/{id}', [HistoryPesanController::class,'kirim_pesan'])->name('kirim_pesan');
     Route::get('kirim_pesan_terlambat', [HistoryPesanController::class, 'kirim_pesan_terlambat'])->name('kirim_pesan_terlambat');
@@ -68,11 +72,24 @@ Route::middleware(['auth'])->group(function()use($ctrl){
         Route::get('pembayaran_telat',[PembayaranTelatController::class,'datatable'])->name('pembayaran_telat');
         Route::get('history_pesan',[HistoryPesanController::class,'datatable'])->name('history_pesan');
         Route::get('history_tagihan',[PelangganController::class,'datatable_history_tagihan'])->name('history_tagihan');
+        Route::get('laporan_pembayaran',[LaporanController::class,'datatable_pembayaran'])->name('laporan_pembayaran');
+        Route::get('laporan_pelanggan',[LaporanController::class,'datatable_pelanggan'])->name('laporan_pelanggan');
+        Route::get('laporan_pembayaran_pemasangan',[LaporanController::class,'datatable_pembayaran_pemasangan'])->name('laporan_pembayaran_pemasangan');
+        Route::get('laporan_tagihan',[LaporanController::class,'datatable_tagihan'])->name('laporan_tagihan');
+        Route::get('laporan_tagihan_pemasangan',[LaporanController::class,'datatable_tagihan_pemasangan'])->name('laporan_tagihan_pemasangan');
     });
 
     Route::group(['prefix'=>'cek_tagihan','as'=>'cek_tagihan.'],function()use($ctrl){
         Route::get('tagihan',[CekTagihanController::class,'tagihan'])->name('tagihan');
         Route::get('tagihan_pemasangan',[CekTagihanController::class,'tagihan_pemasangan'])->name('tagihan_pemasangan');
+    });
+
+    Route::group(['prefix'=>'laporan','as'=>'laporan.'],function()use($ctrl){
+        Route::get('pembayaran',[LaporanController::class,'pembayaran'])->name('pembayaran');
+        Route::get('pembayaran_pemasangan',[LaporanController::class,'pembayaran_pemasangan'])->name('pembayaran_pemasangan');
+        Route::get('pelanggan',[LaporanController::class,'pelanggan'])->name('pelanggan');
+        Route::get('tagihan',[LaporanController::class,'tagihan'])->name('tagihan');
+        Route::get('tagihan_pemasangan',[LaporanController::class,'tagihan_pemasangan'])->name('tagihan_pemasangan');
     });
     
 });

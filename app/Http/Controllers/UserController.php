@@ -30,7 +30,7 @@ class UserController extends Controller
 
     public function datatable(Request $request)
     {
-        $datas = User::select('name','email','created_at','users.id');
+        $datas = User::join('roles', 'users.role_id','=','roles.id')->select('name','email','users.created_at','users.id','roles.nama_role');
 
         $datatables = DataTables::of($datas)
             ->addIndexColumn()

@@ -12,6 +12,7 @@ use Carbon\Carbon;
 use App\Models\Tagihan;
 use Illuminate\Support\Facades\DB;
 use Yajra\DataTables\Facades\DataTables;
+use Helper\Helper;
 
 class HistoryPesanController extends Controller
 {
@@ -114,7 +115,7 @@ class HistoryPesanController extends Controller
 
             // dd($msg1);
 
-            sendWa($pelanggan->no_telepon,$msg1);
+            Helper::sendWa($pelanggan->no_telepon,$msg1);
             DB::commit(); 
             return redirect(route($this->routeName.'.index'))->with(['success'=>'Berhasil Mengirim Pesan : '.$query->id_pembayaran]);
 
@@ -196,7 +197,7 @@ Penggunaan : ". $tagihan->meter_penggunaan ." m³
 Tagihan : Rp. ". number_format($tagihan->jumlah_pembayaran) ."
 ";      
 
-        sendWa($pelanggan->no_telepon,$msg);
+        Helper::sendWa($pelanggan->no_telepon,$msg);
     }
     
     public function kirim_pesan_terlambat()
@@ -242,7 +243,7 @@ Tagihan : Rp. ". number_format($tagihan->jumlah_pembayaran) ."
     
                 // dd($msg1);
                 // dd($d->pelanggan->no_telepon);
-                sendWa($d->pelanggan->no_telepon,$msg1);
+                Helper::sendWa($d->pelanggan->no_telepon,$msg1);
 
                 // sendWa($pelanggan->no_telepon,$msg);
             }
@@ -254,7 +255,7 @@ Tagihan : Rp. ". number_format($tagihan->jumlah_pembayaran) ."
             $msg2 = $template_pesan2->isi_pesan;     
             foreach ($manager as $m) {
                 
-                sendWa($m->no_telepon,$msg2);
+                Helper::sendWa($m->no_telepon,$msg2);
             }
             
         }

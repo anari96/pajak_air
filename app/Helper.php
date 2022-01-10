@@ -1,18 +1,22 @@
 <?php
+namespace Helper;
 
 use App\Models\Profile;
 
-function my_weird_af_function(){
-    return 'sup';
-}
+class Helper
+{
+    
+    function my_weird_af_function(){
+        return 'sup';
+    }
 
-function Profile(){
-    $datas = Profile::first();
+    public static function Profile(){
+        $datas = Profile::first();
 
-    return $datas;
-}
+        return $datas;
+    }
 
-function sendWa($number, $message)
+    public static function sendWa($number, $message)
     {   
         $number = str_replace("+62","0",$number);
         $key='7e10303d8e75d503ef83ab381ac95f692a476a9766c51090';
@@ -44,5 +48,7 @@ function sendWa($number, $message)
         return $res;
         
     }
+}
+
 
 ?>
