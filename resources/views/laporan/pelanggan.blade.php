@@ -25,13 +25,15 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row justify-content-end mb-2">
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            <input type="date" name="date1" value='{{ date('Y-m-d') }}' id='date1'>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input type="date" name="date2" value='{{ date('Y-m-d') }}' id='date2'>
+                        </div>
                     </div>
-                    {{-- <h4 class="card-title">Pengguna</h4> --}}
-                    {{-- <p class="card-title-desc">DataTables has most features enabled by
-                        default, so all you need to do to use it with your own tables is to call
-                        the construction function: <code>$().DataTable();</code>.
-                    </p> --}}
                     <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                         <tr>
@@ -82,11 +84,15 @@
             serverSide: true,
             order: [[ 0, "desc" ]],
             ajax: {
-                'url': '{{ route("datatable.pelanggan") }}',
+                'url': '{{ route("datatable.laporan_pelanggan") }}',
                 'type': 'GET',
                 'beforeSend': function (request) {
                     request.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
-                }
+                },
+                data: function (d) {
+                    d.date1 = $('#date1').val();
+                    d.date2 = $('#date2').val();
+                },
             },
             columns: [
                 {data:'id_pelanggan',name:'id_pelanggan'},
@@ -100,6 +106,13 @@
             buttons: [
                 'excel'
             ]
+        });
+
+        $('#date1').change(function(){
+        table.draw();
+        });
+        $('#date2').change(function(){
+        table.draw();
         });
     </script>
 @endpush

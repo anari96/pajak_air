@@ -25,13 +25,29 @@
         <div class="col-12">
             <div class="card">
                 <div class="card-body">
-                    <div class="row justify-content-end mb-2">
+                    <div class="row mb-2">
+                        <div class="col-md-2">
+                            {{-- <input type="date" name="date1" value='{{ date('Y-m-d') }}' id='date1'> --}}
+                            <select name="status" id="status_pembayaran">
+                                <option value="2">Semua</option>
+                                <option value="0">Belum Lunas</option>
+                                <option value="1">Sudah Lunas</option>
+                            </select>
+                        </div>
+                        <div class="col-md-2">
+                            <input type="date" name="date1" value='{{ date('Y-m-d') }}' id='date1'>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input type="date" name="date2" value='{{ date('Y-m-d') }}' id='date2'>
+                        </div>
                     </div>
                     {{-- <h4 class="card-title">Pengguna</h4> --}}
                     {{-- <p class="card-title-desc">DataTables has most features enabled by
                         default, so all you need to do to use it with your own tables is to call
                         the construction function: <code>$().DataTable();</code>.
                     </p> --}}
+                    
                     <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                         <tr>
@@ -39,7 +55,7 @@
                             <th>Nama</th>
                             <th>Tanggal</th>
                             <th>Tagihan</th>
-                            <th>Status</th>
+                            {{-- <th>Status</th> --}}
                         </tr>
                         </thead>
                         <tbody>
@@ -82,11 +98,16 @@
             serverSide: true,
             order: [[ 0, "desc" ]],
             ajax: {
-                'url': '{{ route("datatable.tagihan_pemasangan") }}',
+                'url': '{{ route("datatable.laporan_tagihan_pemasangan") }}',
                 'type': 'GET',
                 'beforeSend': function (request) {
                     request.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
-                }
+                },
+                data: function (d) {
+                    d.status_pembayaran = $('#status_pembayaran').val();
+                    d.date1 = $('#date1').val();
+                    d.date2 = $('#date2').val();
+                },
             },
             columns: [
                 {data:'id_tagihan_pemasangan',name:'id_tagihan_pemasangan'},
@@ -94,9 +115,19 @@
                 {data:'tanggal',name:'tanggal'},
                 
                 {data:'jumlah_pembayaran', name:'tagihan_pemasangans.jumlah_pembayaran'},
-                {data:'status',name:'status'},
+                // {data:'status',name:'status'},
 
             ],
+        });
+
+        $('#status_pembayaran').change(function(){
+        table.draw();
+        });
+        $('#date1').change(function(){
+        table.draw();
+        });
+        $('#date2').change(function(){
+        table.draw();
         });
     </script>
 @endpush

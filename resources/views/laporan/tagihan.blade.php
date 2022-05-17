@@ -36,6 +36,13 @@
                                 <option value="1">Sudah Lunas</option>
                             </select>
                         </div>
+                        <div class="col-md-2">
+                            <input type="date" name="date1" value='{{ date('Y-m-d') }}' id='date1'>
+                        </div>
+
+                        <div class="col-md-2">
+                            <input type="date" name="date2" value='{{ date('Y-m-d') }}' id='date2'>
+                        </div>
                     </div>
                     <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
@@ -111,6 +118,8 @@
                 },
                 data: function (d) {
                     d.status_pembayaran = $('#status_pembayaran').val();
+                    d.date1 = $('#date1').val();
+                    d.date2 = $('#date2').val();
                 },
             },
             columns: [
@@ -130,6 +139,12 @@
         });
 
         $('#status_pembayaran').change(function(){
+        table.draw();
+        });
+        $('#date1').change(function(){
+        table.draw();
+        });
+        $('#date2').change(function(){
         table.draw();
         });
     </script>

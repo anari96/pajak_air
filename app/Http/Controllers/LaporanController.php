@@ -56,9 +56,12 @@ class LaporanController extends Controller
         return view($this->viewName.'.pelanggan',compact('route','title'));
     }
 
-    public function datatable_pelanggan()
+    public function datatable_pelanggan(Request $request)
     {
-        $datas = Pelanggan::select('id_pelanggan','name','no_telepon','created_at','pelanggans.id','nik');
+        $date1 = $request->date1;
+        $date2 = $request->date2;
+
+        $datas = Pelanggan::select('id_pelanggan','name','no_telepon','created_at','pelanggans.id','nik')->whereBetween('created_at',[$date1,$date2]);
 
         $datatables = DataTables::of($datas)
             ->addIndexColumn()
@@ -76,9 +79,14 @@ class LaporanController extends Controller
         return view($this->viewName.'.pembayaran_pemasangan',compact('route','title'));
     }
 
-    public function datatable_pembayaran_pemasangan()
+    public function datatable_pembayaran_pemasangan(Request $request)
     {
-        $datas = PembayaranPemasangan::join('tagihan_pemasangans','tagihan_pemasangans.id','=','pembayaran_pemasangans.tagihan_pemasangan_id')->join('pelanggans','pelanggans.id','=','tagihan_pemasangans.pelanggan_id')->select('pembayaran_pemasangans.id','pembayaran_pemasangans.id_pembayaran_pemasangan','pembayaran_pemasangans.created_at','pelanggans.id_pelanggan','pelanggans.name','pembayaran_pemasangans.jumlah_pembayaran');
+        $date1 = $request->date1;
+        $date2 = $request->date2;
+
+        $datas = PembayaranPemasangan::join('tagihan_pemasangans','tagihan_pemasangans.id','=','pembayaran_pemasangans.tagihan_pemasangan_id')->join('pelanggans','pelanggans.id','=','tagihan_pemasangans.pelanggan_id')->select('pembayaran_pemasangans.id','pembayaran_pemasangans.id_pembayaran_pemasangan','pembayaran_pemasangans.created_at','pelanggans.id_pelanggan','pelanggans.name','pembayaran_pemasangans.jumlah_pembayaran')->whereHas('tagihan_pemasangan', function($q)use($date1,$date2){
+            $q->whereBetween('tagihan_pemasangans.tanggal',[$date1,$date2]);
+        });
 
         $datatables = DataTables::of($datas)
             ->addIndexColumn()
@@ -102,12 +110,15 @@ class LaporanController extends Controller
 
     public function datatable_tagihan(Request $request)
     {
+        $date1 = $request->date1;
+        $date2 = $request->date2;
+
         if($request->status_pembayaran == '2'){
-            $datas = Tagihan::join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path');
+            $datas = Tagihan::join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path')->whereBetween('tanggal',[$date1,$date2]);
         }else if($request->status_pembayaran == '1'){
-            $datas = Tagihan::has('pembayaran')->join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path');
+            $datas = Tagihan::has('pembayaran')->join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path')->whereBetween('tanggal',[$date1,$date2]);
         }else if($request->status_pembayaran == '0'){
-            $datas = Tagihan::doesntHave('pembayaran')->join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path');
+            $datas = Tagihan::doesntHave('pembayaran')->join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path')->whereBetween('tanggal',[$date1,$date2]);
         }
         
 
@@ -137,25 +148,91 @@ class LaporanController extends Controller
         return view($this->viewName.'.tagihan_pemasangan',compact('route','title'));
     }
 
-    public function datatable_tagihan_pemasangan()
+    public function datatable_tagihan_pemasangan(Request $request)
     {
-        $datas = TagihanPemasangan::join('pelanggans','pelanggans.id','=','tagihan_pemasangans.pelanggan_id')->select('tagihan_pemasangans.id','id_tagihan_pemasangan','tanggal','pelanggans.name','tagihan_pemasangans.jumlah_pembayaran');
+        $datas = TagihanPemasangan::join('pelanggans','pelanggans.id','=','tagihan_pemasangans.pelanggan_id')->select('tagihan_pemasangans.id','id_tagihan_pemasangan','tanggal','pelanggans.name','tagihan_pemasangans.jumlah_pembayaran')->get();
 
-        $datatables = DataTables::of($datas)
-            ->addIndexColumn()
-            ->editColumn('jumlah_pembayaran',function($data){
-                $jumlah = $data->jumlah_pembayaran;
-                return "Rp. ".number_format($jumlah);
-            })
-            ->editColumn('tanggal',function($data){
-                return $data->tanggal->format('d F Y');
-            })
+        // dd($datas);
+
+        $tagihan = [];
+
+        
+        foreach($datas as $d){
+            // dd($d->jumlah_pembayaran);
+            $jumlah = $d->pembayaran->sum('jumlah_pembayaran');
+
+            if($request->status_pembayaran == '2'){
+                    $tagihan[] = [
+                        'id' => $d->id,
+                        'id_tagihan_pemasangan' => $d->id_tagihan_pemasangan,
+                        'tanggal' => $d->tanggal->format('d F Y'),
+                        'name' => $d->name,
+                        'jumlah_pembayaran' => $d->jumlah_pembayaran,
+                        'status' => $d->status
+                    ];
+            }else if($request->status_pembayaran == '1'){
+                if($jumlah >= $d->jumlah_pembayaran){
+                    $tagihan[] = [
+                        'id' => $d->id,
+                        'id_tagihan_pemasangan' => $d->id_tagihan_pemasangan,
+                        'tanggal' => $d->tanggal->format('d F Y'),
+                        'name' => $d->name,
+                        'jumlah_pembayaran' => $d->jumlah_pembayaran,
+                        'status' => $d->status
+                    ];
+                }else if($jumlah < $d->jumlah_pembayaran){
+                    // return "Sudah Lunas";
+                }else{
+                    $tagihan[] = [
+                        'id' => $d->id,
+                        'id_tagihan_pemasangan' => $d->id_tagihan_pemasangan,
+                        'tanggal' => $d->tanggal->format('d F Y'),
+                        'name' => $d->name,
+                        'jumlah_pembayaran' => $d->jumlah_pembayaran,
+                        'status' => $d->status
+                    ];
+                }
+            }else if($request->status_pembayaran == '0'){
+                if($jumlah < $d->jumlah_pembayaran){
+                    $tagihan[] = [
+                        'id' => $d->id,
+                        'id_tagihan_pemasangan' => $d->id_tagihan_pemasangan,
+                        'tanggal' => $d->tanggal->format('d F Y'),
+                        'name' => $d->name,
+                        'jumlah_pembayaran' => $d->jumlah_pembayaran,
+                        'status' => $d->status
+                    ];
+                }else if($jumlah >= $d->jumlah_pembayaran){
+                    // return "Sudah Lunas";
+                }else{
+                    $tagihan[] = [
+                        'id' => $d->id,
+                        'id_tagihan_pemasangan' => $d->id_tagihan_pemasangan,
+                        'tanggal' => $d->tanggal->format('d F Y'),
+                        'name' => $d->name,
+                        'jumlah_pembayaran' => $d->jumlah_pembayaran,
+                        'status' => $d->status
+                    ];
+                }
+            }
+ 
+        }
+
+        $datatables = DataTables::of($tagihan)
+            ->addIndexColumn();
+            // ->editColumn('jumlah_pembayaran',function($data){
+            //     $jumlah = $data->jumlah_pembayaran;
+            //     return "Rp. ".number_format($jumlah);
+            // })
+            // ->editColumn('tanggal',function($data){
+            //     return $data->tanggal->format('d F Y');
+            // });
             // ->addColumn('tahun', function ($data) {
             //     return $data->tanggal->format('Y');
             // })
-            ->addColumn('status', function ($data){
-                return $data->status;
-            });
+            // ->addColumn('status', function ($data){
+            //     return $data->status;
+            // })
 
         return $datatables->make(true);
     }
