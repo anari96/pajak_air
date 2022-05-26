@@ -40,15 +40,15 @@
                                 </div>
                             </div> --}}
                             <div class="row">
-                                <label for="example-text-input" class="col-md-5 col-form-label">No Penggunaan / Nama Perusahaan</label>
+                                <label for="example-text-input" class="col-md-5 col-form-label">No Tagihan / Nama Perusahaan</label>
                             </div>
                             <div class="mb-3 row">
                                 
                                 <div class="col-md-10">
-                                    <select class="form-control select2" name="id_tagihan" id="id_tagihan">
-                                        <option value="">-- Pilih Tagihan --</option>
-                                        @foreach ($tagihans as $tagihan)
-                                            <option value="{{ $tagihan->id }}" @if($request->get('id') == $tagihan->id) selected @endif>{{ $tagihan->id_tagihan }} - {{ $tagihan->pelanggan->name }}</option>
+                                    <select class="form-control select2" name="id_pembayaran" id="id_pembayaran">
+                                        <option value="">-- Pilih Pembayaran --</option>
+                                        @foreach ($pembayarans as $pembayaran)
+                                            <option value="{{ $pembayaran->id }}" @if($request->get('id') == $pembayaran->id) selected @endif>{{ $pembayaran->id_pembayaran }} - {{ $pembayaran->tagihan->pelanggan->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
@@ -120,15 +120,7 @@
                                 </div>
                                 
                             </div>
-                            <div class="row">
-                                <label for="example-text-input" class="col-md-4 col-form-label" >Kategori Perusahaan</label>
-                            </div>
-                            <div class="mb-3 row">
-                                
-                                <div class="col-md-10">
-                                    <input class="form-control" type="text" name="kategori_perusahaan" id="kategori_perusahaan" readonly>
-                                </div>
-                            </div>
+                            
                             <div class="row">
                                 <label for="example-text-input" class="col-md-4 col-form-label">Penggunaan Volume Air</label>
                             </div>
@@ -185,7 +177,7 @@
 
 
 
-@include('pembayaran.js')
+@include('pelunasan.js')
 
 
 

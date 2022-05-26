@@ -3,23 +3,23 @@
         <div class="d-flex" >
             <!-- LOGO -->
             <div class="navbar-brand-box text-center" style="background-color: #5541D7 !important;">
-                <a href="index.html" class="logo logo-dark">
+                {{-- <a href="index.html" class="logo logo-dark">
                     <span class="logo-sm">
                         <img src="{{asset('logo.png')}}" alt="logo-sm-dark" height="22">
                     </span>
                     <span class="logo-lg">
                         <img src="{{asset('logo.png')}}" alt="logo-dark" height="70" width="100">
                     </span>
-                </a>
+                </a> --}}
 
-                <a href="index.html" class="logo logo-light">
+                {{-- <a href="index.html" class="logo logo-light">
                     <span class="logo-sm">
                         <img src="{{asset('logo.png')}}" alt="logo-sm-light" height="22">
                     </span>
                     <span class="logo-lg">
                         <img src="{{asset('logo.png')}}" alt="logo-light" height="70" width="100">
                     </span>
-                </a>
+                </a> --}}
             </div>
 
             <button type="button" class="btn btn-sm px-3 font-size-24 header-item waves-effect" id="vertical-menu-btn" >

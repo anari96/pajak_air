@@ -12,7 +12,7 @@ class PelangganController extends Controller
 {
     protected $routeName = 'pelanggan';
     protected $viewName = 'pelanggan';
-    protected $title = 'Pelanggan';
+    protected $title = 'Perusahaan';
     /**
      * Display a listing of the resource.
      *
@@ -68,7 +68,7 @@ class PelangganController extends Controller
 
     public function datatable()
     {
-        $datas = Pelanggan::select('id_pelanggan','name','no_telepon','created_at','pelanggans.id','nik');
+        $datas = Pelanggan::select('id_pelanggan','name','no_telepon','created_at','pelanggans.id','nik','alamat');
 
         $datatables = DataTables::of($datas)
             ->addIndexColumn()

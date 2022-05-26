@@ -23,7 +23,8 @@ class User extends Authenticatable
         'password',
         'no_telepon',
         'role_id',
-        'nik'
+        'nik',
+        'upt_daerah_id'
     ];
 
     /**

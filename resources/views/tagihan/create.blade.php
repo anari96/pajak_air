@@ -39,7 +39,7 @@
                                 </ul>
                             </div>
                         @endif --}}
-                    <form action="{{ route($route.'.store') }}" method='POST' id="myForm" enctype="multipart/form-data">
+                    <form action="{{ route($route.'.store') }}" method='POST' id="myForm" name="myForm" enctype="multipart/form-data">
                         @csrf
                     <div class="row">
                         <div class="col-6">
@@ -53,57 +53,23 @@
                                 </div>
                             </div> --}}
                             <div class="row">
-                                <label for="example-text-input" class="col-md-4 col-form-label">ID Pelanggan</label>
+                                <label for="example-text-input" class="col-md-4 col-form-label">ID Perusahaan</label>
                             </div>
                             <div class="mb-3 row">
                                 
                                 <div class="col-md-10">
                                     <select class="form-control select2" name="id_pelanggan" id="id_pelanggan">
-                                        <option value="">-- Pilih Pelanggan --</option>
+                                        <option value="">-- Pilih Perusahaan --</option>
                                         @foreach ($pelanggans as $pelanggan)
                                             <option value="{{ $pelanggan->id }}">{{ $pelanggan->id_pelanggan }} - {{ $pelanggan->name }}</option>
                                         @endforeach
                                     </select>
                                 </div>
                             </div>
+                            
+
                             <div class="row">
-                                <label for="example-text-input" class="col-md-4 col-form-label" >Nama</label>
-                            </div>
-                            <div class="mb-3 row">
                                 
-                                <div class="col-md-10">
-                                    <input class="form-control" type="tel" name="nama" id="nama" readonly>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <label for="example-text-input" class="col-md-4 col-form-label" >No Telepon</label>
-                            </div>
-                            <div class="mb-3 row">
-                                
-                                <div class="col-md-10">
-                                    <input class="form-control" type="tel" name="no_telepon" id="no_telepon" readonly>
-                                </div>
-                            </div>
-
-                            <div class="row">
-                                <label for="example-text-input" class="col-md-4 col-form-label">Alamat</label>
-                            </div>
-                            <div class="mb-3 row">
-                                
-                                <div class="col-md-10">
-                                    <textarea class="form-control" name="alamat" id="alamat" readonly></textarea>
-                                </div>
-                            </div>
-
-                            <div class="mb-3">
-                                <label class="form-label">Foto Meter</label>
-                                <input type="file" name="file" class="filestyle">
-                            </div>
-                        </div>
-
-                        <div class="col-6">
-                            <div class="row">
                                 <div class="col-md-6">
                                     <div class="row">
                                         <label for="example-text-input" class="col-md-6 col-form-label">Bulan</label>
@@ -135,20 +101,42 @@
                                         </div>
                                     </div>
                                 </div>
+
+                                <div class="col-md-6">
+                                    <div class="row">
+                                        <label for="example-text-input" class="col-md-6 col-form-label">Penggunaan Meteran?</label>
+                                    </div>
+                                    
+                                    <div class="row">
+                                        <div class="form-check mb-2 col" style="margin-left: .7rem;">
+                                            <input class="form-check-input" type="radio" name="meteran" id="meteran" value="1" checked>
+                                            <label class="form-check-label" for="meteran">
+                                                Pakai
+                                            </label>
+                                        </div>
+                                        <div class="form-check col">
+                                            <input class="form-check-input" type="radio" name="meteran" id="meteran1" value="0">
+                                            <label class="form-check-label" for="meteran1">
+                                                Tidak
+                                            </label>
+                                        </div>
+                                    </div>
+                                    
+                                </div>
+
                                 
                             </div>
-                            
                             <div class="row">
-                                <label for="example-text-input" class="col-md-4 col-form-label">Meter Sebelummya</label>
+                                <label for="example-text-input" class="col-md-4 col-form-label">Meter Awal</label>
                             </div>
                             <div class="mb-3 row">
                                 
                                 <div class="col-md-10">
-                                    <input class="form-control" type="number" name="meter_sebelumnya" id="meter_sebelumnya" readonly>
+                                    <input class="form-control" type="number" name="meter_sebelumnya" id="meter_sebelumnya" min="0" value="0">
                                 </div>
                             </div>
                             <div class="row">
-                                <label for="example-text-input" class="col-md-4 col-form-label">Meter Sekarang</label>
+                                <label for="example-text-input" class="col-md-4 col-form-label">Meter Akhir</label>
                             </div>
                             <div class="mb-3 row">
                                 
@@ -166,8 +154,11 @@
                                     <input class="form-control" type="number" name="pemakaian" id="pemakaian"  readonly>
                                 </div>
                             </div>
-
-                            <div class="row">
+                            <div class="mb-3">
+                                <label class="form-label">Dokument Pendukung</label>
+                                <input type="file" name="file" class="filestyle">
+                            </div>
+                            {{-- <div class="row">
                                 <label for="example-text-input" class="col-md-4 col-form-label" >Jumlah Tagihan</label>
                             </div>
                             <div class="mb-3 row">
@@ -175,7 +166,7 @@
                                 <div class="col-md-12">
                                     <p><h2>Rp. <span id="jumlah_tagihan">0</span></h2></p>
                                 </div>
-                            </div>
+                            </div> --}}
                             
                             <div class="mb-3 row">
                                 <div class="col-md-11">
@@ -186,7 +177,11 @@
                                 </div>
                                 
                             </div>
+
+
+                            
                         </div>
+
                     </div>
                     
 
@@ -210,6 +205,34 @@
             $('.select2').select2();
         });
 
+        //get radio value
+        let radio = document.myForm.meteran;
+        let radio_value = 1;
+        var prev = null;
+        for (var i = 0; i < radio.length; i++) {
+            radio[i].addEventListener('change', function() {
+                if (this !== prev) {
+                    prev = this;
+                }else if(prev){
+                    console.log(prev.value);
+                }
+                
+
+                if(this.value == 1){
+                    radio_value = 1;
+                    document.getElementById('meter_sebelumnya').readOnly = false;
+                    document.getElementById('meter_sekarang').readOnly = false;
+                    document.getElementById('pemakaian').readOnly = true;
+                }else if(this.value == 0){
+                    radio_value = 0;
+                    document.getElementById('meter_sebelumnya').readOnly = true;
+                    document.getElementById('meter_sekarang').readOnly = true;
+                    document.getElementById('pemakaian').readOnly = false;
+                }
+
+                console.log(radio_value);
+            });
+        }
 
         function getPemakaian(){
             p = document.querySelector('#meter_sekarang').value - document.querySelector('#meter_sebelumnya').value;
@@ -218,28 +241,28 @@
 
             pt = p * 11500;
 
-            getTagihan(pt);
+            // getTagihan(pt);
         }
 
-        function getTagihan(value = 0){
-            const p = document.querySelector('#jumlah_tagihan');
-            p.innerText = value;
-        }
+        // function getTagihan(value = 0){
+        //     const p = document.querySelector('#jumlah_tagihan');
+        //     p.innerText = value;
+        // }
 
-        $('#id_pelanggan').on('select2:close', function (e){
-            postData('{{ route("pelanggan.data") }}','POST', {
-                _token: csrfToken ,
-                id: $('#id_pelanggan').val() 
-            })
-            .then(data => {
-                console.log(data); // JSON data parsed by `data.json()` call
-                document.querySelector('#nama').value= data.name;
-                document.querySelector('#no_telepon').value = data.no_telepon;
-                document.querySelector('#alamat').value = data.alamat;
-                document.querySelector('#meter_sebelumnya').value = data.meter_sebelumnya;
-                getPemakaian();
-            });
-        });
+        // $('#id_pelanggan').on('select2:close', function (e){
+        //     postData('{{ route("pelanggan.data") }}','POST', {
+        //         _token: csrfToken ,
+        //         id: $('#id_pelanggan').val() 
+        //     })
+        //     .then(data => {
+        //         console.log(data); // JSON data parsed by `data.json()` call
+        //         document.querySelector('#nama').value= data.name;
+        //         document.querySelector('#no_telepon').value = data.no_telepon;
+        //         document.querySelector('#alamat').value = data.alamat;
+        //         document.querySelector('#meter_sebelumnya').value = data.meter_sebelumnya;
+        //         getPemakaian();
+        //     });
+        // });
 
         
         // function formSubmit(){
@@ -248,7 +271,13 @@
 
         const meter = document.querySelector('#meter_sekarang');
 
+        const meter_sebelumnya = document.querySelector('#meter_sebelumnya')
+
         meter.addEventListener('keyup', (event) => {
+            getPemakaian();
+        });
+
+        meter_sebelumnya.addEventListener('keyup', (event) => {
             getPemakaian();
         });
 
@@ -258,14 +287,22 @@
             event.preventDefault();
             let meter_sebelumnya = parseInt(document.querySelector('#meter_sebelumnya').value);
             let meter_sekarang = parseInt(document.querySelector('#meter_sekarang').value);
-            if(meter_sekarang < meter_sebelumnya){
-                console.log(document.querySelector('#meter_sebelumnya').value);
-                console.log(document.querySelector('#meter_sekarang').value);
-                console.log(pt);
-                alert('error');
-            }else if(meter_sekarang > meter_sebelumnya){
-                form.submit();
+            let pemakaian = parseInt(document.querySelector('#pemakaian').value);
+            if(radio_value == 1){
+                if(meter_sekarang < meter_sebelumnya){
+                    alert('error');
+                }else if(meter_sekarang > meter_sebelumnya){
+                    form.submit();
+                }
+            }else if(radio_value == 0){
+                if(pemakaian > 0){
+                    form.submit();
+                }else if(pemakaian <= 0){
+                    
+                    alert('error');
+                }
             }
+            console.log(radio_value);
         });
     </script>
 @endpush

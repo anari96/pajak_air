@@ -38,9 +38,9 @@
                     <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                         <tr>
-                            <th>No Pembayaran</th>
+                            <th>No Tagihan</th>
                             <th>Tanggal</th>
-                            <th>ID Pelanggan</th>
+                            <th>ID Perusahaan</th>
                             <th>Nama</th>
                             <th>Tagihan</th>
                             <th>Aksi</th>

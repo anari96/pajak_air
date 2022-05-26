@@ -15,7 +15,7 @@ class CreateUptDaerahsTable extends Migration
     {
         Schema::create('upt_daerahs', function (Blueprint $table) {
             $table->id();
-            $table->string('name_daerah');
+            $table->string('nama_daerah');
             $table->timestamps();
         });
     }

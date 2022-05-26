@@ -75,6 +75,30 @@
                     </div>
 
                     <div class="mb-3 row">
+                                
+                        <div class="col-md-10">
+                            <select class="form-control select2" name="upt_daerah" id="upt_daerah">
+                                <option value="">-- Pilih Wilayah --</option>
+                                @foreach ($upt_daerahs as $upt_daerah)
+                                    <option value="{{ $upt_daerah->id }}">{{ $upt_daerah->name_daerah }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
+                                
+                        <div class="col-md-10">
+                            <select class="form-control select2" name="kategori_industri" id="kategori_industri">
+                                <option value="">-- Pilih Kategori --</option>
+                                @foreach ($kategori_industris as $kategori_industri)
+                                    <option value="{{ $kategori_industri->id }}">{{ $kategori_industri->nama_industri }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-3 row">
                         <div class="col-md-11">
                             
                         </div>

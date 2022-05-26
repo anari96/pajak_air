@@ -15,7 +15,7 @@ class TagihanController extends Controller
 
     protected $routeName = 'tagihan';
     protected $viewName = 'tagihan';
-    protected $title = 'Tagihan';
+    protected $title = 'Laporan Pemakaian';
 
     /**
      * Display a listing of the resource.
@@ -31,10 +31,19 @@ class TagihanController extends Controller
 
     public function datatable()
     {
-        $datas = Tagihan::join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path');
+        $datas = Tagihan::join('pelanggans','pelanggans.id','=','tagihans.pelanggan_id')->select('tagihans.id','id_tagihan','tanggal','meter_penggunaan_awal','meter_penggunaan','pelanggans.name','tagihans.jumlah_pembayaran','tagihans.file_name','tagihans.file_path');
 
         $datatables = DataTables::of($datas)
             ->addIndexColumn()
+            ->editColumn('meter_penggunaan', function($data){
+                if($data->meter_penggunaan_awal != null){
+                    $penggunaan = $data->meter_penggunaan - $data->meter_penggunaan_awal;
+                }else if($data->meter_penggunaan_awal == null){
+                    $penggunaan = $data->meter_penggunaan;
+                }
+                return $penggunaan;
+                
+            })
             ->editColumn('jumlah_pembayaran',function($data){
                 $jumlah = $data->jumlah_pembayaran;
                 return "Rp. ".number_format($jumlah);
@@ -63,25 +72,38 @@ class TagihanController extends Controller
     public function data(Request $request){
         $datas = Tagihan::find($request->id);
 
-        $tagihans_sebelumnya = Tagihan::where('pelanggan_id', $datas->pelanggan_id)->whereNotIn('id', [$datas->id])->where('created_at','<',$datas->created_at)->orderBy('created_at','desc');
+        // $tagihans_sebelumnya = Tagihan::where('pelanggan_id', $datas->pelanggan_id)->whereNotIn('id', [$datas->id])->where('created_at','<',$datas->created_at)->orderBy('created_at','desc');
 
-        $jumlah_tagihan = $tagihans_sebelumnya->count();
+        // $jumlah_tagihan = $tagihans_sebelumnya->count();
 
-        if($jumlah_tagihan > 0){
-            $meter_sebelumnya = $tagihans_sebelumnya->first()->meter_penggunaan;
-        }else if($jumlah_tagihan <= 0){
-            $meter_sebelumnya = 0;
+        // if($jumlah_tagihan > 0){
+        //     $meter_sebelumnya = $tagihans_sebelumnya->first()->meter_penggunaan;
+        // }else if($jumlah_tagihan <= 0){
+        //     $meter_sebelumnya = 0;
+        // }
+
+        if($datas->meter_penggunaan_awal != null){
+            $meter_sebelumnya = $datas->meter_penggunaan_awal;
+            $meter_sekarang = $datas->meter_penggunaan;
+            $pemakaian = $meter_sekarang - $meter_sebelumnya;
+
+            // $jumlah_pembayaran = $pemakaian * 11500;
+        }else if($datas->meter_penggunaan_awal == null){
+
+            $pemakaian = $datas->meter_penggunaan;
+
+            // $jumlah_pembayaran = $meter_sekarang * 11500;
         }
 
-        
 
-        $total_pemakaian = $datas->meter_penggunaan - $meter_sebelumnya;
+        // $total_pemakaian = $datas->meter_penggunaan - $datas->meter_penggunaan_awal;
 
         $data = [
             'name' => $datas->pelanggan->name,
+            'kategori_industri' => $datas->pelanggan->kategori_industri->nama_industri,
             'no_telepon' => $datas->pelanggan->no_telepon,
             'alamat' => $datas->pelanggan->alamat,
-            'total_pemakaian' => $total_pemakaian,
+            'total_pemakaian' => number_format($pemakaian),
             'bulan' => $datas->tanggal->format('n'),
             'tahun' => $datas->tanggal->format('Y'),
         ];
@@ -130,6 +152,7 @@ class TagihanController extends Controller
      */
     public function store(Request $request)
     {
+        // dd($request->meteran);
         $validator = $request->validate([
             'id_pelanggan' => 'required|string|max:100',
             'meter_sekarang' => 'numeric|required|digits_between:1,100',
@@ -153,29 +176,41 @@ class TagihanController extends Controller
         }
 
         $datas = Pelanggan::find($request->id_pelanggan);
-        $tagihans = Tagihan::where('pelanggan_id', $datas->id)->orderBy('created_at','desc');
+        // $tagihans = Tagihan::where('pelanggan_id', $datas->id)->orderBy('created_at','desc');
 
-        $jumlah_tagihan = $tagihans->count();
+        // $jumlah_tagihan = $tagihans->count();
 
         // dd($jumlah_tagihan);
 
-        if($jumlah_tagihan > 0){
-            $meter_sebelumnya = $tagihans->first()->meter_penggunaan;
-        }else if($jumlah_tagihan <= 0){
-            $meter_sebelumnya = 0;
-        }
+        // if($jumlah_tagihan > 0){
+        //     $meter_sebelumnya = $tagihans->first()->meter_penggunaan;
+        // }else if($jumlah_tagihan <= 0){
+        //     $meter_sebelumnya = 0;
+        // }
 
-        $pemakaian = $request->meter_sekarang - $meter_sebelumnya;
+        // $pemakaian = $request->meter_sekarang - $request->meter_sebelumnya;
 
-        $jumlah_pembayaran = $pemakaian * 11500;
+        // $jumlah_pembayaran = $pemakaian * 11500;
 
         // dd($jumlah_pembayaran);
 
         $date = $request->tahun.'-'.$request->bulan.'-20';
 
         $date_formated = Carbon::createFromFormat('Y-m-d',$date);
-
         
+        if($request->meteran == 1){
+            $meter_sebelumnya = $request->meter_sebelumnya;
+            $meter_sekarang = $request->meter_sekarang;
+            $pemakaian = $meter_sekarang - $meter_sebelumnya;
+
+            $jumlah_pembayaran = $pemakaian * 11500;
+        }else if($request->meteran == 0){
+            $meter_sebelumnya = null;
+            $meter_sekarang = $request->pemakaian;
+
+            $jumlah_pembayaran = $meter_sekarang * 11500;
+        }
+
         // dd($date_formated->format('Y-m-d'));
         try{
             DB::beginTransaction();
@@ -189,7 +224,8 @@ class TagihanController extends Controller
                     'id_tagihan' => $txt,
                     'pelanggan_id' => $datas->id,
                     'tanggal'=>$date_formated,
-                    'meter_penggunaan'=>$request->meter_sekarang,
+                    'meter_penggunaan_awal'=>$meter_sebelumnya,
+                    'meter_penggunaan'=>$meter_sekarang,
                     'jumlah_pembayaran'=> $jumlah_pembayaran,
                     'file_name' => $nama_file,
                     'file_path' => '/storage/image/',
@@ -199,7 +235,8 @@ class TagihanController extends Controller
                     'id_tagihan' => $txt,
                     'pelanggan_id' => $datas->id,
                     'tanggal'=>$date_formated,
-                    'meter_penggunaan'=>$request->meter_sekarang,
+                    'meter_penggunaan_awal'=>$meter_sebelumnya,
+                    'meter_penggunaan'=>$meter_sekarang,
                     'jumlah_pembayaran'=> $jumlah_pembayaran
                 ]);
             }

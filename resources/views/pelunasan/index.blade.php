@@ -2,7 +2,7 @@
 
 @section('content')
 <div class="container-fluid">
-
+    
     <!-- start page title -->
     <div class="row">
         <div class="col-12">
@@ -38,11 +38,11 @@
                     <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                         <tr>
+                            <th>No Pembayaran</th>
+                            <th>Tanggal</th>
                             <th>ID Perusahaan</th>
-                            <th>Nama Perusahaan</th>
-                            <th>No. Telepon</th>
-                            <th>Alamat</th>
-                            <th>Created At</th>
+                            <th>Nama</th>
+                            <th>Tagihan</th>
                             <th>Aksi</th>
                         </tr>
                         </thead>
@@ -86,18 +86,19 @@
             serverSide: true,
             order: [[ 0, "desc" ]],
             ajax: {
-                'url': '{{ route("datatable.pelanggan") }}',
+                'url': '{{ route("datatable.pelunasan") }}',
                 'type': 'GET',
                 'beforeSend': function (request) {
                     request.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
                 }
             },
             columns: [
-                {data:'id_pelanggan',name:'id_pelanggan'},
-                {data:'name',name:'name'},
-                {data:'no_telepon',name:'no_telepon'},
-                {data:'alamat',name:'alamat'},
-                {data:'created_at',name:'created_at'},
+                {data:'id_pelunasan',name:'id_pembayaran'},
+                {data:'tanggal',name:'tanggal'},
+                {data:'id_pelanggan',name:'pelanggans.id_pelanggan'},
+                {data:'name',name:'pelanggans.name'},
+                {data:'jumlah_pembayaran', name:'tagihans.jumlah_pembayaran'},
+                
                 {data:'action',name:'action' , searchable: false},
 
             ],

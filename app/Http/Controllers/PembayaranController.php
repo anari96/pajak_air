@@ -14,7 +14,7 @@ class PembayaranController extends Controller
 {
     protected $routeName = 'pembayaran';
     protected $viewName = 'pembayaran';
-    protected $title = 'Pembayaran';
+    protected $title = 'Tagihan';
     /**
      * Display a listing of the resource.
      *
@@ -46,6 +46,35 @@ class PembayaranController extends Controller
             });
 
         return $datatables->make(true);
+    }
+
+    public function data(Request $request)
+    {
+        $datas = Pembayaran::find($request->id);
+
+        if($datas->tagihan->meter_penggunaan_awal != null){
+            $meter_sebelumnya = $datas->tagihan->meter_penggunaan_awal;
+            $meter_sekarang = $datas->tagihan->meter_penggunaan;
+            $pemakaian = $meter_sekarang - $meter_sebelumnya;
+
+            // $jumlah_pembayaran = $pemakaian * 11500;
+        }else if($datas->tagihan->meter_penggunaan_awal == null){
+
+            $pemakaian = $datas->tagihan->meter_penggunaan;
+
+            // $jumlah_pembayaran = $meter_sekarang * 11500;
+        }
+
+        $data = [
+            'name' => $datas->tagihan->pelanggan->name,
+            'no_telepon' => $datas->tagihan->pelanggan->no_telepon,
+            'alamat' => $datas->tagihan->pelanggan->alamat,
+            'total_pemakaian' => number_format($pemakaian),
+            'bulan' => $datas->tagihan->tanggal->format('n'),
+            'tahun' => $datas->tagihan->tanggal->format('Y'),
+        ];
+
+        return response()->json($data);
     }
 
     /**

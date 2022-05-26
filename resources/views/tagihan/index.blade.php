@@ -39,8 +39,8 @@
                         <thead>
                         <tr>
                             <th>No Tagihan</th>
-                            <th>Nama</th>
-                            <th>Meter Penggunaan</th>
+                            <th>Nama Perusahaan</th>
+                            <th>Penggunaan (m³)</th>
                             <th>Tagihan</th>
                             <th>Bulan</th>
                             <th>Tahun</th>

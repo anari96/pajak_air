@@ -21,6 +21,11 @@ class Pelanggan extends Model
         return $this->hasMany(TagihanPemasangan::class);
     }
 
+    public function kategori_industri()
+    {
+        return $this->belongsTo(KategoriIndustri::class);
+    }
+
     public static function boot() {
         parent::boot();
         self::deleting(function($q) {

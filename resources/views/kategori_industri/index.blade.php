@@ -38,11 +38,7 @@
                     <table id="datatable" class="table table-bordered dt-responsive" style="border-collapse: collapse; border-spacing: 0; width: 100%;">
                         <thead>
                         <tr>
-                            <th>ID Perusahaan</th>
-                            <th>Nama Perusahaan</th>
-                            <th>No. Telepon</th>
-                            <th>Alamat</th>
-                            <th>Created At</th>
+                            <th>Nama Industri</th>
                             <th>Aksi</th>
                         </tr>
                         </thead>
@@ -86,18 +82,14 @@
             serverSide: true,
             order: [[ 0, "desc" ]],
             ajax: {
-                'url': '{{ route("datatable.pelanggan") }}',
+                'url': '{{ route("datatable.kategori_industri") }}',
                 'type': 'GET',
                 'beforeSend': function (request) {
                     request.setRequestHeader("X-CSRFToken", '{{ csrf_token() }}');
                 }
             },
             columns: [
-                {data:'id_pelanggan',name:'id_pelanggan'},
-                {data:'name',name:'name'},
-                {data:'no_telepon',name:'no_telepon'},
-                {data:'alamat',name:'alamat'},
-                {data:'created_at',name:'created_at'},
+                {data:'nama_industri',name:'nama_industri'},
                 {data:'action',name:'action' , searchable: false},
 
             ],

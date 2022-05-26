@@ -9,7 +9,7 @@ class Tagihan extends Model
 {
     use HasFactory;
 
-    protected $fillable =['id_tagihan','pelanggan_id','tanggal','meter_penggunaan','jumlah_pembayaran','file_name','file_path'];
+    protected $fillable =['id_tagihan','pelanggan_id','tanggal','meter_penggunaan','meter_penggunaan_awal','jumlah_pembayaran','file_name','file_path'];
 
     protected $dates = ['tanggal'];
 
